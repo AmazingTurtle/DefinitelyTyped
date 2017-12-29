@@ -3,6 +3,7 @@
 // Definitions by: Marwan Aouida <https://github.com/maouida>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+/* tslint:disable */
 /// <reference types="node"/>
 
 
@@ -145,6 +146,40 @@ declare enum errors {
 }
 
 /**
+ * Authenticator for using classic authentication.
+ *
+ * @param {Object.<string, string>} buckets
+ *  Map of bucket names to passwords.
+ * @param {string} [username]
+ *  Cluster administration username.
+ * @param {string} [password]
+ *  Cluster administration password.
+ * @constructor
+ *
+ * @since 2.2.3
+ * @uncommitted
+ */
+declare class ClassicAuthenticator {
+    constructor(buckets: {[bucketName: string]: string}, username: string, password: string);
+}
+
+/**
+ * Authenticator for performing role-based authentication.
+ *
+ * @param {string} [username]
+ *  RBAC username.
+ * @param {string} [password]
+ *  RBAC password.
+ * @constructor
+ *
+ * @since 2.3.3
+ * @uncommitted
+ */
+declare class PasswordAuthenticator {
+    constructor(username: string, password: string);
+}
+
+/**
  * Represents a singular cluster containing your buckets.
  */
 declare class Cluster {
@@ -195,6 +230,27 @@ declare class Cluster {
      * @param callback Callback to invoke on connection success or failure.
      */
     openBucket(name?: string, password?: string, callback?: Function): Bucket;
+
+    /**
+     * Specifies an authenticator to use to authenticate to this cluster.
+     *
+     * @param {PasswordAuthenticator | ClassicAuthenticator} auther
+     *
+     * @since 2.1.7
+     * @uncommitted
+     */
+    authenticate(auther: PasswordAuthenticator | ClassicAuthenticator);
+
+    /**
+     * Uses the PasswordAuthenticator to authenticate to this cluster.
+     *
+     * @param username
+     * @param password
+     *
+     * @since 2.1.7
+     * @uncommitted
+     */
+    authenticate(username: string, password: string);
 }
 
 interface ClusterConstructorOptions {
@@ -869,11 +925,11 @@ interface Bucket {
     getReplica(key: any | Buffer, callback: Bucket.OpCallback): void;
 
     /**
-    * Get a document from a replica server in your cluster.
-    * @param key The target document key.
-    * @param options The options object.
-    * @param callback The callback function.
-    */
+     * Get a document from a replica server in your cluster.
+     * @param key The target document key.
+     * @param options The options object.
+     * @param callback The callback function.
+     */
     getReplica(key: any | Buffer, options: GetReplicaOptions, callback: Bucket.OpCallback): void;
 
     /**
